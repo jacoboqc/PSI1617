@@ -28,9 +28,10 @@ public class MainController {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Scene scene = new Scene(root, 250, 100);
+                Scene scene = new Scene(root);
                 stage.setTitle("About");
                 stage.setScene(scene);
+                stage.setResizable(false);
                 stage.show();
             });
         newGame.setOnAction(event -> {
@@ -41,9 +42,10 @@ public class MainController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Scene scene = new Scene(root, 250, 100);
+            Scene scene = new Scene(root);
             stage.setTitle("New game");
             stage.setScene(scene);
+            stage.setResizable(false);
             stage.show();
         });
 
