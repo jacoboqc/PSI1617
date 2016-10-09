@@ -14,6 +14,8 @@ public class MainController {
     private MenuItem close;
     @FXML
     private MenuItem about;
+    @FXML
+    private MenuItem newGame;
 
     @FXML
     public void initialize() {
@@ -31,5 +33,19 @@ public class MainController {
                 stage.setScene(scene);
                 stage.show();
             });
+        newGame.setOnAction(event -> {
+            Stage stage = new Stage();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(getClass().getResource("newGame.fxml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Scene scene = new Scene(root, 250, 100);
+            stage.setTitle("New game");
+            stage.setScene(scene);
+            stage.show();
+        });
+
     }
 }

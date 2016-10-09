@@ -26,7 +26,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Run">
             <items>
-              <MenuItem mnemonicParsing="false" text="New game" />
+              <MenuItem fx:id="newGame" mnemonicParsing="false" text="New game" />
                   <MenuItem mnemonicParsing="false" text="Stop game" />
                   <MenuItem mnemonicParsing="false" text="Continue game" />
             </items>
