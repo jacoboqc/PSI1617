@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="603.0" prefWidth="718.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainController">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="603.0" prefWidth="718.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controller.MainController">
    <children>
       <MenuBar>
         <menus>
@@ -24,6 +25,11 @@
               <MenuItem fx:id="close" mnemonicParsing="false" text="Exit" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Edit">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Reset players" />
+              </items>
+            </Menu>
           <Menu mnemonicParsing="false" text="Run">
             <items>
               <MenuItem fx:id="newGame" mnemonicParsing="false" text="New game" />
@@ -33,7 +39,7 @@
           </Menu>
             <Menu mnemonicParsing="false" text="Window">
               <items>
-                <MenuItem mnemonicParsing="false" text="Verbose" />
+                  <CheckMenuItem mnemonicParsing="false" text="Verbose" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">
@@ -76,7 +82,7 @@
          <children>
             <ImageView fitHeight="98.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
                <image>
-                  <Image url="@../../../../../Desktop/avatar.png" />
+                  <Image url="/gui/icons/intel.png" />
                </image>
             </ImageView>
             <Label alignment="CENTER" prefHeight="81.0" prefWidth="70.0" text="VS" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
@@ -85,10 +91,10 @@
                </font>
             </Label>
             <ImageView fitHeight="103.0" fitWidth="107.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
-               <image>
-                  <Image url="@../../../../../Desktop/robot.png" />
-               </image>
-            </ImageView>
+                 <image>
+                     <Image url="/gui/icons/fixed.png" />
+                 </image>
+             </ImageView>
          </children>
          <VBox.margin>
             <Insets top="20.0" />

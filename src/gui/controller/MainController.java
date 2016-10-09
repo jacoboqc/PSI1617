@@ -1,4 +1,4 @@
-package gui;
+package gui.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,7 +24,7 @@ public class MainController {
                 Stage stage = new Stage();
                 Parent root = null;
                 try {
-                    root = FXMLLoader.load(getClass().getResource("about.fxml"));
+                    root = FXMLLoader.load(getClass().getResource("../style/about.fxml"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -37,7 +37,7 @@ public class MainController {
             Stage stage = new Stage();
             Parent root = null;
             try {
-                root = FXMLLoader.load(getClass().getResource("newGame.fxml"));
+                root = FXMLLoader.load(getClass().getResource("../style/newGame.fxml"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
