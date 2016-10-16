@@ -13,21 +13,12 @@ import java.net.URISyntaxException;
 public class AboutController {
     @FXML
     private Button closeAbout;
-    @FXML
-    private Hyperlink link;
 
     @FXML
     private void initialize () {
         closeAbout.setOnAction(event -> {
             Stage stage = (Stage) closeAbout.getScene().getWindow();
             stage.close();
-        });
-        link.setOnAction(event -> {
-            try {
-                Desktop.getDesktop().browse(new URI("http://www.flaticon.com"));
-            } catch (IOException | URISyntaxException e) {
-                e.printStackTrace();
-            }
         });
     }
 }

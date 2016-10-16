@@ -11,15 +11,13 @@ import java.io.IOException;
 
 public class MainController {
     @FXML
-    private MenuItem close;
+    private MenuItem exit;
     @FXML
     private MenuItem about;
-    @FXML
-    private MenuItem newGame;
 
     @FXML
     public void initialize() {
-        close.setOnAction(event -> System.exit(0));
+        exit.setOnAction(event -> System.exit(0));
         about.setOnAction(event -> {
                 Stage stage = new Stage();
                 Parent root = null;
@@ -34,20 +32,5 @@ public class MainController {
                 stage.setResizable(false);
                 stage.show();
             });
-        newGame.setOnAction(event -> {
-            Stage stage = new Stage();
-            Parent root = null;
-            try {
-                root = FXMLLoader.load(getClass().getResource("../style/newGame.fxml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Scene scene = new Scene(root);
-            stage.setTitle("New game");
-            stage.setScene(scene);
-            stage.setResizable(false);
-            stage.show();
-        });
-
     }
 }
