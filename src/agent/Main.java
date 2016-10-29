@@ -8,6 +8,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 import java.util.Random;
 import java.util.Scanner;
@@ -15,7 +16,7 @@ import java.util.Scanner;
 public class Main extends Agent{
     private int numberPlayers; //N
     private int matrixSize = 3; //S
-    private int numberRounds = 2; //R
+    private int numberRounds = 10; //R
     private int numberIterations = 5; //I
     private int percentage = 25; //P
     private int[][][] matrix = new int[matrixSize][matrixSize][2];
@@ -66,6 +67,26 @@ public class Main extends Agent{
                     send(msg);
                 }
                 System.out.println("Done!");
+
+                System.out.print("Starting game.");
+                for (int i = 0; i < numberRounds; i++) {
+                    int[] strategy = new int[2];
+                    for (int j = 0; j < players.length; j++) {
+                        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+                        msg.addReceiver(players[j]);
+                        msg.setContent("Position");
+                        send(msg);
+                        ACLMessage rsp = myAgent.blockingReceive();
+                        strategy[j] = Integer.parseInt(rsp.getContent().split("#")[1]);
+                    }
+                    int[] payoff = matrix[strategy[0]][strategy[1]];
+                    for (int j = 0; j < players.length; j++) {
+                        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+                        msg.addReceiver(players[j]);
+                        msg.setContent("Results#" + strategy[0] + "," + strategy[1] + "#" + payoff[0] + "," + payoff[1]);
+                        send(msg);
+                    }
+                }
             }
         });
         System.out.println("Hello! " + getAID().getName() + "is ready.");

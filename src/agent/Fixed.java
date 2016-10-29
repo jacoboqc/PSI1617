@@ -8,6 +8,8 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 
+import java.util.Random;
+
 public class Fixed extends Agent {
     private int id; //Id
     private int numberPlayers; //N
@@ -15,6 +17,8 @@ public class Fixed extends Agent {
     private int numberRounds; //R
     private int numberIterations; //I
     private int percentage; //P
+    private int position;
+    private int payoff = 0;
 
     @Override
     protected void setup() {
@@ -34,6 +38,8 @@ public class Fixed extends Agent {
                     System.out.println("This is PLAYER #" + id);
                     System.out.println("The game is " + numberPlayers + " players, " + matrixSize + " matrix size, " + numberRounds + " number of rounds, " + numberIterations + " number of iterations and " + percentage + " percentage.");
                 }
+                position = new Random().nextInt(matrixSize);
+                System.out.println("I have chosen to play " + position);
 
                 System.out.print("> Receiving NewGame message... ");
                 msg = myAgent.blockingReceive();
@@ -42,6 +48,23 @@ public class Fixed extends Agent {
                     System.out.println("Processing message... ");
                     processNewGameMessage(msg);
                     System.out.println("Done!");
+                }
+
+                System.out.print("Starting game.");
+                for (int i = 0; i < numberRounds; i++) {
+                    msg = myAgent.blockingReceive();
+                    if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
+                        ACLMessage rsp = new ACLMessage(ACLMessage.REQUEST);
+                        rsp.addReceiver(msg.getSender());
+                        rsp.setContent("Position#" + position);
+                        send(rsp);
+                    }
+                    msg = myAgent.blockingReceive();
+                    if(msg != null) {
+                        payoff += Integer.parseInt(msg.getContent().split("#")[2].split(",")[id]);
+                        System.out.println("Payoff for this round is " + payoff);
+                    }
+
                 }
             }
         });
