@@ -7,6 +7,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 public class Random extends Agent {
     private int id; //Id
@@ -36,9 +37,10 @@ public class Random extends Agent {
                     System.out.println("This is PLAYER #" + id);
                     System.out.println("The game is " + numberPlayers + " players, " + matrixSize + " matrix size, " + numberRounds + " number of rounds, " + numberIterations + " number of iterations and " + percentage + " percentage.");
                 }
+                MessageTemplate mt = MessageTemplate.not(MessageTemplate.MatchContent("Changed#" + percentage));
 
                 System.out.print("> Receiving NewGame message... ");
-                msg = myAgent.blockingReceive();
+                msg = myAgent.blockingReceive(mt);
                 System.out.print("Done! ");
                 if (msg != null) {
                     System.out.println("Processing message... ");
@@ -46,23 +48,27 @@ public class Random extends Agent {
                     System.out.println("Done!");
                 }
 
-                System.out.print("Starting game.");
+                System.out.println("Starting game.");
                 for (int i = 0; i < numberRounds; i++) {
                     position = new java.util.Random().nextInt(matrixSize);
                     System.out.println("I have chosen to play " + position);
-                    msg = myAgent.blockingReceive();
+                    msg = myAgent.blockingReceive(mt);
                     if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
                         ACLMessage rsp = new ACLMessage(ACLMessage.REQUEST);
                         rsp.addReceiver(msg.getSender());
                         rsp.setContent("Position#" + position);
                         send(rsp);
                     }
-                    msg = myAgent.blockingReceive();
+                    msg = myAgent.blockingReceive(mt);
                     if(msg != null) {
                         payoff += Integer.parseInt(msg.getContent().split("#")[2].split(",")[id]);
-                        System.out.println("Payoff for this round is " + payoff);
+                        System.out.println("Payoff after this round is " + payoff);
                     }
-
+                }
+                msg = myAgent.blockingReceive(mt);
+                if (msg != null && msg.getContent().equals("EndGame")) {
+                    System.out.println("Game over!.");
+                    takeDown();
                 }
             }
         });
