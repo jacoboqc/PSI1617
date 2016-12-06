@@ -1,5 +1,6 @@
 package gui.controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -52,7 +53,7 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        exit.setOnAction(event -> System.exit(0));
+        exit.setOnAction(event -> Platform.exit());
         about.setOnAction(event -> {
             Stage stage = new Stage();
             Parent root = null;
@@ -101,7 +102,7 @@ public class MainController {
         });
     }
 
-    private void printLog(String value) {
+    public void printLog(String value) {
         if (verbose.isSelected()) {
             log.setText(log.getText() + "\n" + value);
         }

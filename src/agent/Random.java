@@ -43,7 +43,7 @@ public class Random extends Agent {
                 MessageTemplate mt = MessageTemplate.not(MessageTemplate.MatchContent("Changed#" + percentage));
                 ACLMessage msg;
 
-                System.out.print("> Receiving NewGame message... ");
+                System.out.print("> Waiting for NewGame message... ");
                 msg = myAgent.blockingReceive(mt);
                 System.out.print("Done! ");
                 if (msg != null) {

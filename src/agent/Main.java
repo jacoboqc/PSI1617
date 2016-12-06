@@ -1,5 +1,7 @@
 package agent;
 
+import gui.GraphicInterface;
+import gui.controller.MainController;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
@@ -22,16 +24,17 @@ public class Main extends Agent {
     private int[][][] matrix = new int[matrixSize][matrixSize][2];
     private List<Integer> payoffs;
     private List<AID> ids = new ArrayList<>();
+    private static MainController controller;
 
     @Override
-
     protected void setup() {
-        createMatrix();
+        GraphicInterface gui = new GraphicInterface();
+        new Thread(() -> gui.show()).start();
+        doWait(5000);
+        controller = gui.getController();
+
         System.out.println("> Press ENTER to begin.");
         new Scanner(System.in).nextLine();
-
-        System.out.println("We are gonna play with this matrix:");
-        printMatrix();
         addBehaviour(new OneShotBehaviour() {
             private AID[] players;
 
@@ -69,6 +72,10 @@ public class Main extends Agent {
                 addBehaviour(new TickerBehaviour(myAgent, 2000) {
                     @Override
                     protected void onTick() {
+                        createMatrix();
+                        System.out.println("We are gonna play with this matrix:");
+                        printMatrix();
+
                         AID[] pair = pairs.get(getTickCount() - 1);
                         System.out.print("> Sending NewGame message to the players... ");
                         int player1, player2;
