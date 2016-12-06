@@ -1,13 +1,15 @@
 package agent;
 
 import jade.core.Agent;
-import jade.core.behaviours.WakerBehaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+
+import java.util.Arrays;
 
 public class Random extends Agent {
     private int id; //Id
@@ -17,7 +19,7 @@ public class Random extends Agent {
     private int numberIterations; //I
     private int percentage; //P
     private int position;
-    private int payoff = 0;
+    private int payoff;
 
     @Override
     protected void setup() {
@@ -25,19 +27,21 @@ public class Random extends Agent {
         register();
         System.out.println("Done!");
 
-        addBehaviour(new WakerBehaviour(this, 0) {
-            protected void handleElapsedTimeout() {
-                System.out.print("> Receiving ID message... ");
-                ACLMessage msg = myAgent.blockingReceive();
-                System.out.print("Done! ");
-                if (msg != null) {
-                    System.out.print("Processing message... ");
-                    processIdMessage(msg);
-                    System.out.println("Done!");
-                    System.out.println("This is PLAYER #" + id);
-                    System.out.println("The game is " + numberPlayers + " players, " + matrixSize + " matrix size, " + numberRounds + " number of rounds, " + numberIterations + " number of iterations and " + percentage + " percentage.");
-                }
+        System.out.print("> Receiving ID message... ");
+        ACLMessage msg = blockingReceive();
+        System.out.print("Done! ");
+        if (msg != null) {
+            System.out.print("Processing message... ");
+            processIdMessage(msg);
+            System.out.println("Done!");
+            System.out.println("This is PLAYER #" + id);
+            System.out.println("The game is " + numberPlayers + " players, " + matrixSize + " matrix size, " + numberRounds + " number of rounds, " + numberIterations + " number of iterations and " + percentage + " percentage.");
+        }
+
+        addBehaviour(new CyclicBehaviour() {
+            public void action() {
                 MessageTemplate mt = MessageTemplate.not(MessageTemplate.MatchContent("Changed#" + percentage));
+                ACLMessage msg;
 
                 System.out.print("> Receiving NewGame message... ");
                 msg = myAgent.blockingReceive(mt);
@@ -49,6 +53,7 @@ public class Random extends Agent {
                 }
 
                 System.out.println("Starting game.");
+                payoff = 0;
                 for (int i = 0; i < numberRounds; i++) {
                     position = new java.util.Random().nextInt(matrixSize);
                     System.out.println("I have chosen to play " + position);
@@ -61,14 +66,16 @@ public class Random extends Agent {
                     }
                     msg = myAgent.blockingReceive(mt);
                     if(msg != null) {
-                        payoff += Integer.parseInt(msg.getContent().split("#")[2].split(",")[id]);
+                        String[] positions = msg.getContent().split("#")[1].split(",");
+                        int payoffIndex = Arrays.asList(positions).indexOf(Integer.toString(position));
+                        payoff += Integer.parseInt(msg.getContent().split("#")[2].split(",")[payoffIndex]);
                         System.out.println("Payoff after this round is " + payoff);
                     }
                 }
                 msg = myAgent.blockingReceive(mt);
                 if (msg != null && msg.getContent().equals("EndGame")) {
                     System.out.println("Game over!.");
-                    takeDown();
+                    while (myAgent.receive() != null) {}
                 }
             }
         });
