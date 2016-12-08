@@ -59,85 +59,12 @@
          <children>
             <ScrollPane prefHeight="230.0" prefWidth="514.0">
                <content>
-                  <GridPane prefHeight="120.0" prefWidth="505.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="79.0" minWidth="10.0" prefWidth="62.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="106.0" minWidth="10.0" prefWidth="91.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="97.0" minWidth="10.0" prefWidth="94.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="89.0" minWidth="10.0" prefWidth="89.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="101.0" minWidth="10.0" prefWidth="97.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                          <Label text="Name" GridPane.halignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Label text="ID" GridPane.columnIndex="1" GridPane.halignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Label text="Won" GridPane.columnIndex="2" GridPane.halignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Label text="Lost" GridPane.columnIndex="3" GridPane.halignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Label text="Draw" GridPane.columnIndex="4" GridPane.halignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Label text="Total payoff" GridPane.columnIndex="5" GridPane.halignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </GridPane>
+                  <Text fx:id="globalStats" strokeType="OUTSIDE" strokeWidth="0.0" text="Name Type ID Won Lost Draw Total Payoff" />
                </content>
             </ScrollPane>
             <ScrollPane prefHeight="231.0" prefWidth="514.0">
                <content>
-                  <GridPane gridLinesVisible="true">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label text="0" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
-                        <Label text="1" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
-                        <Label text="2" GridPane.columnIndex="3" GridPane.halignment="CENTER" />
-                        <Label text="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                        <Label text="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-                        <Label text="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                        <Label text="Payoff matrix">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </GridPane>
+                  <Text fx:id="matrix" strokeType="OUTSIDE" strokeWidth="0.0" text="Payoff matrix" />
                </content>
             </ScrollPane>
             <ScrollPane prefHeight="200.0" prefWidth="200.0">
@@ -186,18 +113,14 @@
                   <Separator prefWidth="200.0" />
                   <TextFlow prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Number of rounds: 3" />
+                        <Text fx:id="numberRounds" strokeType="OUTSIDE" strokeWidth="0.0" text="Number of rounds: 0" />
                      </children></TextFlow>
                   <Separator prefWidth="200.0" />
                   <TextFlow layoutX="10.0" layoutY="206.0" prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Number of games: 0" />
+                        <Text fx:id="numberGames" strokeType="OUTSIDE" strokeWidth="0.0" text="Number of games: 0" />
                      </children></TextFlow>
                   <Separator prefWidth="200.0" />
-                  <TextFlow layoutX="10.0" layoutY="163.0" prefHeight="200.0" prefWidth="200.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Number of matches: 1" />
-                     </children></TextFlow>
                </children>
                <StackPane.margin>
                   <Insets top="20.0" />

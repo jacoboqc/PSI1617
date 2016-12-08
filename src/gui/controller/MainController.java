@@ -1,20 +1,21 @@
 package gui.controller;
 
+import jade.core.*;
+import jade.core.behaviours.Behaviour;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class MainController {
+
     @FXML
     private MenuItem exit;
     @FXML
@@ -44,12 +45,23 @@ public class MainController {
     @FXML
     private TextField percentage;
     @FXML
+    private Text numberRounds;
+    @FXML
+    private Text numberGames;
+    @FXML
     private Text log;
+    @FXML
+    private Text globalStats;
+    @FXML
+    private Text matrix;
 
     private int matrixSizeParam;
     private int roundsParam;
     private int iterationsParam;
     private int percentageParam;
+
+    private Agent main;
+    private Behaviour gameBehaviour;
 
     @FXML
     public void initialize() {
@@ -69,42 +81,122 @@ public class MainController {
             stage.show();
         });
         reset.setOnAction(event -> printLog("Resetting players."));
-        newGame.setOnAction(event -> printLog("Starting new game."));
-        stopGame.setOnAction(event -> printLog("Stopping current game."));
-        continueGame.setOnAction(event -> printLog("Continuing current game."));
+        newGame.setOnAction(event -> {
+            printLog("Starting new game.");
+            restart();
+        });
+        stopGame.setOnAction(event -> {
+            printLog("Stopping current game.");
+            pause();
+        });
+        continueGame.setOnAction(event -> {
+            printLog("Continuing current game.");
+            resume();
+        });
         verbose.setSelected(true);
         verbose.setOnAction(event -> {
             if (verbose.isSelected()) log.setText(log.getText() + "\nLogging system activated.");
             else log.setText(log.getText() + "\nLogging system deactivated.");
         });
-        newButton.setOnAction(event -> printLog("Starting new game."));
-        stopButton.setOnAction(event -> printLog("Stopping current game."));
-        continueButton.setOnAction(event -> printLog("Continuing current game."));
-        matrixSize.setText("3");
+        newButton.setOnAction(event -> {
+            printLog("Starting new game.");
+            restart();
+        });
+        stopButton.setOnAction(event -> {
+            printLog("Stopping current game.");
+            pause();
+        });
+        continueButton.setOnAction(event -> {
+            printLog("Continuing current game.");
+            resume();
+        });
         matrixSize.setOnAction(event -> {
             matrixSizeParam = Integer.parseInt(matrixSize.getText());
             printLog("Setting matrix size to: " + matrixSizeParam);
+            restart();
         });
-        rounds.setText("5");
         rounds.setOnAction(event -> {
             roundsParam = Integer.parseInt(rounds.getText());
             printLog("Setting number of rounds to: " + roundsParam);
+            restart();
         });
-        iterations.setText("4");
         iterations.setOnAction(event -> {
             iterationsParam = Integer.parseInt(iterations.getText());
             printLog("Setting number of iterations to: " + iterationsParam);
+            restart();
         });
-        percentage.setText("25");
         percentage.setOnAction(event -> {
             percentageParam = Integer.parseInt(percentage.getText());
             printLog("Setting percentage to: " + percentageParam);
+            restart();
         });
+        setDefaultParams();
     }
 
     public void printLog(String value) {
         if (verbose.isSelected()) {
             log.setText(log.getText() + "\n" + value);
+        }
+    }
+
+    private void setDefaultParams() {
+        matrixSizeParam = 4;
+        matrixSize.setText(Integer.toString(matrixSizeParam));
+        roundsParam = 10;
+        rounds.setText(Integer.toString(roundsParam));
+        iterationsParam = 2;
+        iterations.setText(Integer.toString(iterationsParam));
+        percentageParam = 25;
+        percentage.setText(Integer.toString(percentageParam));
+    }
+
+    public void setGlobalStats(String[][] globalStats) {
+        this.globalStats.setText("Name Type ID Won Lost Draw Total Payoff");
+        for (String[] stat : globalStats) {
+            this.globalStats.setText(this.globalStats.getText() + "\n" + Arrays.toString(stat));
+        }
+    }
+
+    public void setNumberRounds(int num) {
+        numberRounds.setText(numberRounds.getText().split(": ")[0] + ": " + num);
+    }
+
+    public void setNumberGames(int num) {
+        numberGames.setText(numberGames.getText().split(": ")[0] + ": " + num);
+    }
+
+    public void passAgentReference(Agent agent) {
+        main = agent;
+    }
+
+    public void passBehaviourReference(Behaviour behaviour) {
+        gameBehaviour = behaviour;
+    }
+
+    private void pause() {
+        main.doSuspend();
+    }
+
+    private void resume() {
+        main.doActivate();
+    }
+
+    private void restart() {
+        main.removeBehaviour(gameBehaviour);
+        main.addBehaviour(gameBehaviour);
+    }
+
+    public int[] getParameters() {
+        return new int[]{matrixSizeParam, roundsParam, iterationsParam, percentageParam};
+    }
+
+    public void printMatrix(int[][][] matrix) {
+        this.matrix.setText("Payoff matrix\n");
+        for (int i = 0; i < matrixSizeParam; i++) {
+            for (int j = 0; j < matrixSizeParam; j++) {
+                this.matrix.setText(this.matrix.getText() + matrix[i][j][0] + "/" + matrix[i][j][1] + " ");
+            }
+            this.matrix.setText(this.matrix.getText() + "\n");
         }
     }
 }
