@@ -2,7 +2,6 @@ package gui.controller;
 
 import jade.core.*;
 import jade.core.behaviours.Behaviour;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

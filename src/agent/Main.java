@@ -33,7 +33,10 @@ public class Main extends Agent {
 
     @Override
     protected void setup() {
-        new Thread(() -> Application.launch(GraphicInterface.class)).start();
+        new Thread(() -> {
+            Application.launch(GraphicInterface.class);
+            System.exit(0);
+        }).start();
         controller = GraphicInterface.waitForGraphicInterface();
         printLog("> Launching agents...");
         this.doWait(5000);
@@ -263,18 +266,31 @@ public class Main extends Agent {
     }
 
     private void shuffleMatrix() {
-        double cellsToShuffle = (Math.pow(matrixSize, 2) * (percentage / 100F)) / 2;
-        printLog("Number of cells to shuffle: " + cellsToShuffle * 2);
-        for (int i = 0; i < (int) cellsToShuffle; i++) {
+        int cellsToShuffle = (int) Math.ceil(Math.pow(matrixSize, 2) * (percentage / 100F));
+        printLog("Number of cells to shuffle: " + cellsToShuffle);
+
+        int i = 0;
+        int[][] shuffledCells = new int[cellsToShuffle][2];
+        while (i < cellsToShuffle) {
             Random r = new Random();
             int row = r.nextInt(matrixSize);
             int column = r.nextInt(matrixSize);
-            int payoff1 = r.nextInt(10);
-            matrix[row][column][0] = payoff1;
-            matrix[column][row][1] = payoff1;
-            int payoff2 = r.nextInt(10);
-            matrix[row][column][1] = payoff2;
-            matrix[column][row][0] = payoff2;
+            if (!Arrays.asList(shuffledCells).contains(new int[] {row, column})){
+                int payoff1 = r.nextInt(10);
+                matrix[row][column][0] = payoff1;
+                matrix[column][row][1] = payoff1;
+                int payoff2 = r.nextInt(10);
+                matrix[row][column][1] = payoff2;
+                matrix[column][row][0] = payoff2;
+                if (row == column) {
+                    shuffledCells[i] = new int[]{row, column};
+                    i += 1;
+                } else {
+                    shuffledCells[i] = new int[]{row, column};
+                    shuffledCells[i] = new int[]{column, row};
+                    i += 2;
+                }
+            }
         }
         Platform.runLater(() -> controller.printMatrix(matrix));
     }
