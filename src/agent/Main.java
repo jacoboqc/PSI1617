@@ -200,9 +200,9 @@ public class Main extends Agent {
             for (int i = 0; i < 2; i++) {
                 int id = ids.indexOf(pair[i]);
                 int payoff = payoffs[i];
-                globalStats[id][6] = Integer.toString(Integer.parseInt(globalStats[i][6]) + payoff);
-                if (id == winner) globalStats[id][3] = Integer.toString(Integer.parseInt(globalStats[i][3]) + 1);
-                else globalStats[id][4] = Integer.toString(Integer.parseInt(globalStats[i][4]) + 1);
+                globalStats[id][6] = Integer.toString(Integer.parseInt(globalStats[id][6]) + payoff);
+                if (id == winner) globalStats[id][3] = Integer.toString(Integer.parseInt(globalStats[id][3]) + 1);
+                else globalStats[id][4] = Integer.toString(Integer.parseInt(globalStats[id][4]) + 1);
             }
             Platform.runLater(() -> controller.setGlobalStats(globalStats));
         }
