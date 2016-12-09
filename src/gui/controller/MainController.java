@@ -64,6 +64,7 @@ public class MainController {
     private boolean doReset = false;
 
     private Agent main;
+    private Behaviour mainBehaviour;
     private Behaviour gameBehaviour;
 
     @FXML
@@ -182,7 +183,11 @@ public class MainController {
         main = agent;
     }
 
-    public void passBehaviourReference(Behaviour behaviour) {
+    public void passMainBehaviourReference(Behaviour behaviour) {
+        mainBehaviour = behaviour;
+    }
+
+    public void passGameBehaviourReference(Behaviour behaviour) {
         gameBehaviour = behaviour;
     }
 
@@ -196,7 +201,8 @@ public class MainController {
 
     private void restart() {
         main.removeBehaviour(gameBehaviour);
-        main.addBehaviour(gameBehaviour);
+        main.removeBehaviour(mainBehaviour);
+        main.addBehaviour(mainBehaviour);
     }
 
     public int[] getParameters() {

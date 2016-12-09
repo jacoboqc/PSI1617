@@ -82,11 +82,13 @@ public class Main extends Agent {
 
                 createGlobalStats();
                 Platform.runLater(() -> controller.passAgentReference(myAgent));
-                Platform.runLater(() -> controller.passBehaviourReference(this));
+                Platform.runLater(() -> controller.passMainBehaviourReference(this));
 
                 addBehaviour(new TickerBehaviour(myAgent, 2000) {
                     @Override
                     protected void onTick() {
+                        Platform.runLater(() -> controller.passGameBehaviourReference(this));
+
                         createMatrix();
                         AID[] pair = pairs.get(getTickCount() - 1);
                         createLocalStats(pair);
