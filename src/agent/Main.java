@@ -108,7 +108,7 @@ public class Main extends Agent {
                         ACLMessage msg;
                         printLog("Starting game.");
                         for (int i = 0; i < numberRounds; i++) {
-                            if ((i + 1) % numberIterations == 0 && i != 0) {
+                            if (i != 0 && numberIterations != 0 && (i + 1) % numberIterations == 0) {
                                 printLog("> Time to shuffle " + percentage + "% of the matrix in round " + (i + 1));
                                 shuffleMatrix();
                                 for (int j = 0; j < 2; j++) {
