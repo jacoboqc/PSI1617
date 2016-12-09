@@ -53,6 +53,8 @@ public class MainController {
     @FXML
     private Text globalStats;
     @FXML
+    private Text localStats;
+    @FXML
     private Text matrix;
 
     private int matrixSizeParam;
@@ -60,12 +62,14 @@ public class MainController {
     private int iterationsParam;
     private int percentageParam;
 
+    private boolean doReset = false;
+
     private Agent main;
     private Behaviour gameBehaviour;
 
     @FXML
     public void initialize() {
-        exit.setOnAction(event -> Platform.exit());
+        exit.setOnAction(event -> System.exit(0));
         about.setOnAction(event -> {
             Stage stage = new Stage();
             Parent root = null;
@@ -80,7 +84,10 @@ public class MainController {
             stage.setResizable(false);
             stage.show();
         });
-        reset.setOnAction(event -> printLog("Resetting players."));
+        reset.setOnAction(event -> {
+            printLog("Resetting players.");
+            doReset = true;
+        });
         newGame.setOnAction(event -> {
             printLog("Starting new game.");
             restart();
@@ -157,6 +164,13 @@ public class MainController {
         }
     }
 
+    public void setLocalStats(String[][] localStats) {
+        this.localStats.setText("Player Won Lost Draw Total Payoff");
+        for (String[] stat : localStats) {
+            this.localStats.setText(this.localStats.getText() + "\n" + Arrays.toString(stat));
+        }
+    }
+
     public void setNumberRounds(int num) {
         numberRounds.setText(numberRounds.getText().split(": ")[0] + ": " + num);
     }
@@ -188,6 +202,13 @@ public class MainController {
 
     public int[] getParameters() {
         return new int[]{matrixSizeParam, roundsParam, iterationsParam, percentageParam};
+    }
+
+    public boolean doReset() {
+        if (doReset) {
+            doReset = false;
+            return true;
+        } else return false;
     }
 
     public void printMatrix(int[][][] matrix) {

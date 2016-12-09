@@ -35,8 +35,9 @@ public class Main extends Agent {
     protected void setup() {
         new Thread(() -> Application.launch(GraphicInterface.class)).start();
         controller = GraphicInterface.waitForGraphicInterface();
-        System.out.println("> Press ENTER to begin.");
-        new Scanner(System.in).nextLine();
+        printLog("> Launching agents...");
+        this.doWait(5000);
+        printLog("Done!");
 
         addBehaviour(new OneShotBehaviour() {
             @Override
@@ -76,7 +77,7 @@ public class Main extends Agent {
                 }
                 printLog("Done!");
 
-                createGlobalStats(players);
+                createGlobalStats();
                 Platform.runLater(() -> controller.passAgentReference(myAgent));
                 Platform.runLater(() -> controller.passBehaviourReference(this));
 
@@ -84,8 +85,9 @@ public class Main extends Agent {
                     @Override
                     protected void onTick() {
                         createMatrix();
-
                         AID[] pair = pairs.get(getTickCount() - 1);
+                        createLocalStats(pair);
+
                         printLog("> Sending NewGame message to the players... ");
                         int player1, player2;
                         player1 = ids.indexOf(pair[0]);
@@ -136,6 +138,7 @@ public class Main extends Agent {
                                 send(msg);
                             }
                             setNumberRounds(i + 1);
+                            updateLocalStats(payoff);
                         }
                         setNumberGames(getTickCount());
                         printLog("Game over!.");
@@ -168,8 +171,6 @@ public class Main extends Agent {
         System.out.println("Hello! " + getAID().getName() + "is ready.");
     }
 
-
-
     protected void takeDown() {
         System.out.println("Agent " + getAID().getName() + " terminating.");
     }
@@ -178,7 +179,7 @@ public class Main extends Agent {
         Platform.runLater(() -> controller.printLog(log));
     }
 
-    private void createGlobalStats(AID[] players) {
+    private void createGlobalStats() {
         globalStats = new String[players.length][7];
         for (int i = 0; i < players.length; i++) {
             AID player = players[i];
@@ -190,14 +191,39 @@ public class Main extends Agent {
     }
 
     private void updateGlobalStats(int[] payoffs, AID[] pair, int winner) {
+        if (controller.doReset()){
+            createGlobalStats();
+        } else {
+            for (int i = 0; i < 2; i++) {
+                int id = ids.indexOf(pair[i]);
+                int payoff = payoffs[i];
+                globalStats[id][6] = Integer.toString(Integer.parseInt(globalStats[i][6]) + payoff);
+                if (id == winner) globalStats[id][3] = Integer.toString(Integer.parseInt(globalStats[i][3]) + 1);
+                else globalStats[id][4] = Integer.toString(Integer.parseInt(globalStats[i][4]) + 1);
+            }
+            Platform.runLater(() -> controller.setGlobalStats(globalStats));
+        }
+    }
+
+    private void createLocalStats(AID[] pair) {
+        localStats = new String[2][5];
         for (int i = 0; i < 2; i++) {
             int id = ids.indexOf(pair[i]);
-            int payoff = payoffs[i];
-            globalStats[id][6] = Integer.toString(Integer.parseInt(globalStats[i][6]) + payoff);
-            if (id == winner) globalStats[id][3] = Integer.toString(Integer.parseInt(globalStats[i][3]) + 1);
-            else globalStats[id][4] = Integer.toString(Integer.parseInt(globalStats[i][4]) + 1);
+            localStats[i] = new String[] {Integer.toString(id), "0", "0", "0", "0"};
         }
-        Platform.runLater(() -> controller.setGlobalStats(globalStats));
+        Platform.runLater(() -> controller.setLocalStats(localStats));
+    }
+
+    private void updateLocalStats(int[] payoff) {
+        int winner;
+        if (payoff[0] > payoff[1]) winner = 0;
+        else winner = 1;
+        for (int i = 0; i < 2; i++) {
+            localStats[i][4] = Integer.toString(Integer.parseInt(localStats[i][4]) + payoff[i]);
+            if (winner == i) localStats[i][1] = Integer.toString(Integer.parseInt(localStats[i][1]) + 1);
+            else localStats[i][2] = Integer.toString(Integer.parseInt(localStats[i][2]) + 1);
+        }
+        Platform.runLater(() -> controller.setLocalStats(localStats));
     }
 
     private void setNumberRounds(int num) {

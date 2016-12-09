@@ -27,62 +27,53 @@ public class Random extends Agent {
         System.out.print("> Registering in the DF... ");
         register();
         System.out.println("Done!");
-
-        addBehaviour(new OneShotBehaviour() {
-            @Override
+        addBehaviour(new CyclicBehaviour() {
             public void action() {
-                System.out.print("> Receiving ID message... ");
-                ACLMessage msg = blockingReceive();
-                System.out.print("Done! ");
-                if (msg != null) {
-                    System.out.print("Processing message... ");
+                MessageTemplate mt = null;
+                ACLMessage msg = myAgent.blockingReceive(mt);
+                if (msg != null && msg.getContent().startsWith("Id#")) {
+                    System.out.print("Processing ID message... ");
                     processIdMessage(msg);
                     System.out.println("Done!");
                     System.out.println("This is PLAYER #" + id);
                     System.out.println("The game is " + numberPlayers + " players, " + matrixSize + " matrix size, " + numberRounds + " number of rounds, " + numberIterations + " number of iterations and " + percentage + " percentage.");
+                    mt = MessageTemplate.not(MessageTemplate.MatchContent("Changed#" + percentage));
+                    msg = myAgent.blockingReceive(mt);
+                    System.out.println("Processing NewGame message... ");
+                    processNewGameMessage(msg);
+                    System.out.println("Done!");
+                } else if (msg != null && msg.getContent().startsWith("NewGame#")) {
+                    mt = MessageTemplate.not(MessageTemplate.MatchContent("Changed#" + percentage));
+                    System.out.println("Processing NewGame message... ");
+                    processNewGameMessage(msg);
+                    System.out.println("Done!");
                 }
 
-                addBehaviour(new CyclicBehaviour() {
-                    public void action() {
-                        ACLMessage msg;
-                        MessageTemplate mt = MessageTemplate.not(MessageTemplate.MatchContent("Changed#" + percentage));
-
-                        System.out.print("> Waiting for NewGame message... ");
-                        msg = myAgent.blockingReceive(mt);
-                        System.out.print("Done! ");
-                        if (msg != null) {
-                            System.out.println("Processing message... ");
-                            processNewGameMessage(msg);
-                            System.out.println("Done!");
-                        }
-
-                        System.out.println("Starting game.");
-                        payoff = 0;
-                        for (int i = 0; i < numberRounds; i++) {
-                            position = new java.util.Random().nextInt(matrixSize);
-                            System.out.println("I have chosen to play " + position);
-                            msg = myAgent.blockingReceive(mt);
-                            if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
-                                ACLMessage rsp = new ACLMessage(ACLMessage.REQUEST);
-                                rsp.addReceiver(msg.getSender());
-                                rsp.setContent("Position#" + position);
-                                send(rsp);
-                            }
-                            msg = myAgent.blockingReceive(mt);
-                            if(msg != null) {
-                                String[] positions = msg.getContent().split("#")[1].split(",");
-                                int payoffIndex = Arrays.asList(positions).indexOf(Integer.toString(position));
-                                payoff += Integer.parseInt(msg.getContent().split("#")[2].split(",")[payoffIndex]);
-                                System.out.println("Payoff after this round is " + payoff);
-                            }
-                        }
-                        msg = myAgent.blockingReceive(mt);
-                        if (msg != null && msg.getContent().equals("EndGame")) {
-                            System.out.println("Game over!.");
-                            while (myAgent.receive() != null) {}
-                        }
+                System.out.println("Starting game.");
+                payoff = 0;
+                for (int i = 0; i < numberRounds; i++) {
+                    position = new java.util.Random().nextInt(matrixSize);
+                    System.out.println("I have chosen to play " + position);
+                    msg = myAgent.blockingReceive(mt);
+                    if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
+                        ACLMessage rsp = new ACLMessage(ACLMessage.REQUEST);
+                        rsp.addReceiver(msg.getSender());
+                        rsp.setContent("Position#" + position);
+                        send(rsp);
                     }
-                });
+                    msg = myAgent.blockingReceive(mt);
+                    if(msg != null) {
+                        String[] positions = msg.getContent().split("#")[1].split(",");
+                        int payoffIndex = Arrays.asList(positions).indexOf(Integer.toString(position));
+                        payoff += Integer.parseInt(msg.getContent().split("#")[2].split(",")[payoffIndex]);
+                        System.out.println("Payoff after this round is " + payoff);
+                    }
+                }
+                msg = myAgent.blockingReceive(mt);
+                if (msg != null && msg.getContent().equals("EndGame")) {
+                    System.out.println("Game over!.");
+                    while (myAgent.receive() != null) {}
+                }
             }
         });
         System.out.println("Hello! " + getAID().getName() + "is ready.");
