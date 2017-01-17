@@ -100,7 +100,7 @@ public class Main extends Agent {
                         for (int i = 0; i < 2; i++) {
                             ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
                             msg.addReceiver(pair[i]);
-                            msg.setContent("NewGame#" + player1 + "#" + player2);
+                            msg.setContent("NewGame#" + player1 + "," + player2);
                             send(msg);
                         }
                         printLog("Done!");
@@ -168,8 +168,6 @@ public class Main extends Agent {
                             removeBehaviour(this);
                         }
                     }
-
-
                 });
             }
         });
