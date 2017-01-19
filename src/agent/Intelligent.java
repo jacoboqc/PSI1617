@@ -23,7 +23,7 @@ public class Intelligent extends Agent {
     private int position;
     private int[][][] matrix;
 
-    private boolean firstPlay = true;
+    private boolean playRandom = true;
     private String playFor;
 
     @Override
@@ -47,9 +47,10 @@ public class Intelligent extends Agent {
                     processResultsMessage(msg);
                 }else if (msg != null && msg.getContent().startsWith("Changed")) {
                     initializeMatrix();
+                    playRandom = true;
                 } else if (msg != null && msg.getContent().equals("EndGame")) {
                     while (myAgent.receive() != null) {}
-                    firstPlay = true;
+                    playRandom = true;
                 }
             }
         });
@@ -93,12 +94,13 @@ public class Intelligent extends Agent {
         pos2 = Integer.parseInt(content.split("#")[1].split(",")[1]);
         pay1 = Integer.parseInt(content.split("#")[2].split(",")[0]);
         pay2 = Integer.parseInt(content.split("#")[2].split(",")[1]);
-        matrix[pos1][pos2] = new int[] {pay1, pay2};
+        matrix[pos1][pos2] = new int[]{pay1, pay2};
+        matrix[pos2][pos1] = new int[]{pay2, pay1};
     }
 
-    public int choosePosition() {
-        if (firstPlay) {
-            firstPlay = false;
+    private int choosePosition() {
+        if (playRandom) {
+            playRandom = false;
             return new java.util.Random().nextInt(matrixSize);
         }
         List<Integer> diffs = new ArrayList<>();

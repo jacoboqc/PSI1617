@@ -158,14 +158,14 @@ public class MainController {
     }
 
     public void setGlobalStats(String[][] globalStats) {
-        this.globalStats.setText("Name Type ID Won Lost Draw Total Payoff");
+        this.globalStats.setText("Name-Type-ID-Won-Lost-Draw-Total Payoff");
         for (String[] stat : globalStats) {
             this.globalStats.setText(this.globalStats.getText() + "\n" + Arrays.toString(stat));
         }
     }
 
     public void setLocalStats(String[][] localStats) {
-        this.localStats.setText("Player Won Lost Draw Total Payoff");
+        this.localStats.setText("Player-Won-Lost-Draw-Total Payoff");
         for (String[] stat : localStats) {
             this.localStats.setText(this.localStats.getText() + "\n" + Arrays.toString(stat));
         }

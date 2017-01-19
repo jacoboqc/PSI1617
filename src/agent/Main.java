@@ -155,8 +155,13 @@ public class Main extends Agent {
                                 winner = i;
                             }
                         }
-                        printLog("Player #" + ids.indexOf(pair[winner]) + " - Score: " + score);
-                        updateGlobalStats(payoffs, pair, ids.indexOf(pair[winner]));
+                        if (payoffs[0] == payoffs[1]) {
+                            printLog("There's been a tie! - Score: " + score);
+                            updateGlobalStats(payoffs, pair, -1);
+                        } else {
+                            printLog("Player #" + ids.indexOf(pair[winner]) + " - Score: " + score);
+                            updateGlobalStats(payoffs, pair, ids.indexOf(pair[winner]));
+                        }
                         for (int j = 0; j < 2; j++) {
                             msg = new ACLMessage(ACLMessage.INFORM);
                             msg.addReceiver(pair[j]);
@@ -188,7 +193,11 @@ public class Main extends Agent {
             AID player = players[i];
             String name = player.getLocalName();
             int id = ids.indexOf(player);
-            globalStats[i] = new String[] {name, "Player", Integer.toString(id), "0", "0", "0", "0"};
+            String type = "OTHER";
+            if(name.toLowerCase().startsWith("fixed")) type = "FIXED";
+            else if(name.toLowerCase().startsWith("random")) type = "RANDOM";
+            else if(name.toLowerCase().startsWith("intelligent")) type = "INTELLIGENT";
+            globalStats[i] = new String[] {name, type, Integer.toString(id), "0", "0", "0", "0"};
         }
         Platform.runLater(() -> controller.setGlobalStats(globalStats));
     }
@@ -197,12 +206,23 @@ public class Main extends Agent {
         if (controller.doReset()){
             createGlobalStats();
         } else {
-            for (int i = 0; i < 2; i++) {
-                int id = ids.indexOf(pair[i]);
-                int payoff = payoffs[i];
-                globalStats[id][6] = Integer.toString(Integer.parseInt(globalStats[id][6]) + payoff);
-                if (id == winner) globalStats[id][3] = Integer.toString(Integer.parseInt(globalStats[id][3]) + 1);
-                else globalStats[id][4] = Integer.toString(Integer.parseInt(globalStats[id][4]) + 1);
+            if (winner == -1) {
+                globalStats[ids.indexOf(pair[0])][6]
+                        = Integer.toString(Integer.parseInt(globalStats[ids.indexOf(pair[0])][6]) + payoffs[0]);
+                globalStats[ids.indexOf(pair[1])][6]
+                        = Integer.toString(Integer.parseInt(globalStats[ids.indexOf(pair[1])][6]) + payoffs[1]);
+                globalStats[ids.indexOf(pair[0])][5]
+                        = Integer.toString(Integer.parseInt(globalStats[ids.indexOf(pair[0])][4]) + 1);
+                globalStats[ids.indexOf(pair[1])][5]
+                        = Integer.toString(Integer.parseInt(globalStats[ids.indexOf(pair[1])][4]) + 1);
+            } else {
+                for (int i = 0; i < 2; i++) {
+                    int id = ids.indexOf(pair[i]);
+                    int payoff = payoffs[i];
+                    globalStats[id][6] = Integer.toString(Integer.parseInt(globalStats[id][6]) + payoff);
+                    if (id == winner) globalStats[id][3] = Integer.toString(Integer.parseInt(globalStats[id][3]) + 1);
+                    else globalStats[id][4] = Integer.toString(Integer.parseInt(globalStats[id][4]) + 1);
+                }
             }
             Platform.runLater(() -> controller.setGlobalStats(globalStats));
         }
