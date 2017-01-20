@@ -24,6 +24,7 @@ public class GraphicInterface extends Application{
         stage.setTitle("PSI Game 16/17");
         stage.setScene(scene);
         stage.setResizable(false);
+        // Mostramos la GUI
         stage.show();
     }
 
@@ -33,6 +34,7 @@ public class GraphicInterface extends Application{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        // Devolvemos el controlador de la GUI al agente principal
         return controller;
     }
 }

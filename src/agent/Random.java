@@ -26,6 +26,7 @@ public class Random extends Agent {
                 if (msg != null && msg.getContent().startsWith("Id")) {
                     processIdMessage(msg);
                 } else if (msg != null && msg.getContent().startsWith("Position")) {
+                    // Decidimos la estrategia en cada ronda
                     position = new java.util.Random().nextInt(matrixSize);
                     ACLMessage rsp = new ACLMessage(ACLMessage.REQUEST);
                     rsp.addReceiver(msg.getSender());

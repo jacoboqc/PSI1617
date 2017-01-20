@@ -33,6 +33,7 @@ public class Main extends Agent {
 
     @Override
     protected void setup() {
+        // Lanza la GUI
         new Thread(() -> {
             Application.launch(GraphicInterface.class);
             System.exit(0);
@@ -42,15 +43,18 @@ public class Main extends Agent {
         this.doWait(5000);
         printLog("Done!");
 
+        // Comportamiento de la GUI
         addBehaviour(new OneShotBehaviour() {
             @Override
             public void action() {
+                // Se leen los parámetros de la GUI
                 int[] params = controller.getParameters();
                 matrixSize = params[0];
                 numberRounds = params[1];
                 numberIterations = params[2];
                 percentage = params[3];
 
+                // Se buscan los agentes participantes
                 printLog("> Searching for players... ");
                 DFAgentDescription template = new DFAgentDescription();
                 ServiceDescription sd = new ServiceDescription();
@@ -68,8 +72,10 @@ public class Main extends Agent {
                     e.printStackTrace();
                 }
                 printLog("Done!");
+                // Obtiene todas las combinaciones posibles de dos agentes para jugar
                 List<AID[]> pairs = getPairs(players);
 
+                // Enviamos ID a los agentes
                 printLog("> Sending ID message to the players...");
                 for (int i = 0; i < numberPlayers; i++) {
                     ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
@@ -80,19 +86,24 @@ public class Main extends Agent {
                 }
                 printLog("Done!");
 
+                // Inicializamos las estadisticas globales
                 createGlobalStats();
                 Platform.runLater(() -> controller.passAgentReference(myAgent));
                 Platform.runLater(() -> controller.passMainBehaviourReference(this));
 
+                // Comportamiento para cada juego
                 addBehaviour(new TickerBehaviour(myAgent, 2000) {
                     @Override
                     protected void onTick() {
                         Platform.runLater(() -> controller.passGameBehaviourReference(this));
 
+                        // Inicializamos la matriz
                         createMatrix();
                         AID[] pair = pairs.get(getTickCount() - 1);
+                        // Inicializamos las estadisticas locales
                         createLocalStats(pair);
 
+                        // Avisamos del inicio de un nuevo juego
                         printLog("> Sending NewGame message to the players... ");
                         int player1, player2;
                         player1 = ids.indexOf(pair[0]);
@@ -104,12 +115,15 @@ public class Main extends Agent {
                             send(msg);
                         }
                         printLog("Done!");
+                        // Inicializamos las payoffs de ambos jugadores
                         payoffs = new int[2];
                         Arrays.fill(payoffs, 0);
 
                         ACLMessage msg;
                         printLog("Starting game.");
+                        // Bucle con el número de rondas
                         for (int i = 0; i < numberRounds; i++) {
+                            // Mezclamos la matriz
                             if (i != 0 && numberIterations != 0 && (i + 1) % numberIterations == 0) {
                                 printLog("> Time to shuffle " + percentage + "% of the matrix in round " + (i + 1));
                                 shuffleMatrix();
@@ -121,6 +135,7 @@ public class Main extends Agent {
                                 }
                             }
 
+                            // Pedimos a los agentes su jugada
                             int[] strategy = new int[2];
                             for (int j = 0; j < 2; j++) {
                                 msg = new ACLMessage(ACLMessage.REQUEST);
@@ -130,12 +145,14 @@ public class Main extends Agent {
                                 ACLMessage rsp = myAgent.blockingReceive();
                                 strategy[j] = Integer.parseInt(rsp.getContent().split("#")[1]);
                             }
+                            // Extraemos de la matriz la payoff que han obtenido y sumamos el resultado
                             int[] payoff = matrix[strategy[0]][strategy[1]];
                             for (int j = 0; j < 2; j++) {
                                 int value = payoffs[j];
                                 value += payoff[j];
                                 payoffs[j] = value;
                             }
+                            // Informamos del resultado de la ronda
                             for (int j = 0; j < 2; j++) {
                                 msg = new ACLMessage(ACLMessage.INFORM);
                                 msg.addReceiver(pair[j]);
@@ -146,6 +163,7 @@ public class Main extends Agent {
                             updateLocalStats(payoff);
                         }
                         setNumberGames(getTickCount());
+                        // Decidimos el ganador (o empate)
                         printLog("Game over!.");
                         printLog("And the winner is...");
                         int score = 0, winner = 0;
@@ -162,12 +180,14 @@ public class Main extends Agent {
                             printLog("Player #" + ids.indexOf(pair[winner]) + " - Score: " + score);
                             updateGlobalStats(payoffs, pair, ids.indexOf(pair[winner]));
                         }
+                        // Informamos del final del juego
                         for (int j = 0; j < 2; j++) {
                             msg = new ACLMessage(ACLMessage.INFORM);
                             msg.addReceiver(pair[j]);
                             msg.setContent("EndGame");
                             send(msg);
                         }
+                        // Si se han jugado todos los juegos posibles terminamos
                         if (getTickCount() == pairs.size()) {
                             printLog("> All games have been played!.");
                             removeBehaviour(this);

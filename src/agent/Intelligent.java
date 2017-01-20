@@ -35,17 +35,21 @@ public class Intelligent extends Agent {
                 if (msg != null && msg.getContent().startsWith("Id")) {
                     processIdMessage(msg);
                 } else if (msg != null && msg.getContent().startsWith("NewGame")) {
+                    // Procesamos el mensaje NewGame para descubrir si jugaremos a filas o columnas
                     processNewGameMessage(msg);
                     initializeMatrix();
                 } else if (msg != null && msg.getContent().startsWith("Position")) {
+                    // Elegimos la estrategia
                     position = choosePosition();
                     ACLMessage rsp = new ACLMessage(ACLMessage.REQUEST);
                     rsp.addReceiver(msg.getSender());
                     rsp.setContent("Position#" + position);
                     send(rsp);
                 } else if (msg != null && msg.getContent().startsWith("Results")) {
+                    // Actualizamos la matriz con los resultados conocidos
                     processResultsMessage(msg);
                 }else if (msg != null && msg.getContent().startsWith("Changed")) {
+                    // Cada vez que se resetea la matriz volvemos a jugar aleatorio
                     initializeMatrix();
                     playRandom = true;
                 } else if (msg != null && msg.getContent().equals("EndGame")) {
@@ -99,10 +103,12 @@ public class Intelligent extends Agent {
     }
 
     private int choosePosition() {
+        // La primera jugada (cuando no conocemos nada de la matriz) se juega aleatoria
         if (playRandom) {
             playRandom = false;
             return new java.util.Random().nextInt(matrixSize);
         }
+        // Jugamos la estrategia dominante
         List<Integer> diffs = new ArrayList<>();
         for (int i = 0; i < matrixSize; i++) {
             int pay1 = 0, pay2 = 0, diff;

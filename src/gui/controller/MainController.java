@@ -68,6 +68,7 @@ public class MainController {
     private Behaviour gameBehaviour;
 
     @FXML
+    // Inicializamos las acciones de todos los botones de la GUI
     public void initialize() {
         exit.setOnAction(event -> System.exit(0));
         about.setOnAction(event -> {
@@ -82,6 +83,7 @@ public class MainController {
             stage.setTitle("About");
             stage.setScene(scene);
             stage.setResizable(false);
+            // Mostramos la pantalla de información
             stage.show();
         });
         reset.setOnAction(event -> {
@@ -141,12 +143,14 @@ public class MainController {
     }
 
     public void printLog(String value) {
+        // Si la verbosidad está activada escribimos al log
         if (verbose.isSelected()) {
             log.setText(log.getText() + "\n" + value);
         }
     }
 
     private void setDefaultParams() {
+        // parámetros de juego por defecto
         matrixSizeParam = 4;
         matrixSize.setText(Integer.toString(matrixSizeParam));
         roundsParam = 10;
@@ -158,6 +162,7 @@ public class MainController {
     }
 
     public void setGlobalStats(String[][] globalStats) {
+        // Llamamos desde la GUI para actualizar las estadisticas globales
         this.globalStats.setText("Name-Type-ID-Won-Lost-Draw-Total Payoff");
         for (String[] stat : globalStats) {
             this.globalStats.setText(this.globalStats.getText() + "\n" + Arrays.toString(stat));
@@ -165,6 +170,7 @@ public class MainController {
     }
 
     public void setLocalStats(String[][] localStats) {
+        // Llamamos desde la GUI para actualizar las estadisticas locales
         this.localStats.setText("Player-Won-Lost-Draw-Total Payoff");
         for (String[] stat : localStats) {
             this.localStats.setText(this.localStats.getText() + "\n" + Arrays.toString(stat));
@@ -179,18 +185,18 @@ public class MainController {
         numberGames.setText(numberGames.getText().split(": ")[0] + ": " + num);
     }
 
+    // Pasamos referencia del agente principal y sus dos comportamientos
     public void passAgentReference(Agent agent) {
         main = agent;
     }
 
-    public void passMainBehaviourReference(Behaviour behaviour) {
-        mainBehaviour = behaviour;
-    }
+    public void passMainBehaviourReference(Behaviour behaviour) { mainBehaviour = behaviour; }
 
     public void passGameBehaviourReference(Behaviour behaviour) {
         gameBehaviour = behaviour;
     }
 
+    // Pausamos, continuamos o reiniciamos el juego
     private void pause() {
         main.doSuspend();
     }
@@ -217,6 +223,7 @@ public class MainController {
     }
 
     public void printMatrix(int[][][] matrix) {
+        // Actualizamos la matriz
         this.matrix.setText("Payoff matrix\n");
         for (int i = 0; i < matrixSizeParam; i++) {
             for (int j = 0; j < matrixSizeParam; j++) {

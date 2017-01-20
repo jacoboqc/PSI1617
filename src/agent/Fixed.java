@@ -28,6 +28,7 @@ public class Fixed extends Agent {
                 if (msg != null && msg.getContent().startsWith("Id")) {
                     processIdMessage(msg);
                 } else if (msg != null && msg.getContent().startsWith("NewGame")) {
+                    // Decidimos la estrategia al principio de cada juego
                     position = new Random().nextInt(matrixSize);
                 } else if (msg != null && msg.getContent().startsWith("Position")) {
                     ACLMessage rsp = new ACLMessage(ACLMessage.REQUEST);
